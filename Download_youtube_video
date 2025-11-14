@@ -1,0 +1,36 @@
+import subprocess
+import yt_dlp
+import os
+from google.colab import files
+
+# Assuming you have uploaded a 'cookies.txt' file
+# If you haven't, please upload it first using:
+# uploaded = files.upload()
+# print(uploaded.keys())
+
+video_url = "https://youtu.be/N3URTuFo01U" # The video URL that required cookies
+output_filename = "video_with_cookies.mp4"
+cookie_file_path = "/content/cookies.txt" # Make sure this file exists in your Colab environment
+
+# Check if cookies.txt exists
+if not os.path.exists(cookie_file_path):
+    print(f"Error: The cookie file '{cookie_file_path}' was not found.")
+    print("Please upload your 'cookies.txt' file to Colab or ensure the path is correct.")
+else:
+    # yt-dlp options with cookiefile
+    ydl_opts = {
+        'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
+        'outtmpl': output_filename,
+        'noplaylist': True,
+        'cookiefile': cookie_file_path, # Pass the cookie file here
+    }
+
+    print(f"Downloading video from {video_url} using cookies...")
+
+    try:
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([video_url])
+        print(f"Video downloaded as {output_filename}")
+    except Exception as e:
+        print(f"An error occurred during download: {e}")
+        print("Please ensure your cookies.txt file is correctly formatted and uploaded.")
